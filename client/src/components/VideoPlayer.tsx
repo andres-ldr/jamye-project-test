@@ -13,12 +13,11 @@ const VideoPlayer = () => {
     callEnded,
     me,
   } = useContext(SocketContext);
-  const context = useContext(SocketContext);
 
   return (
-    <div className='grid grid-cols-2'>
+    <div className='grid grid-cols-2 gap-4'>
       {stream && (
-        <div className='flex flex-col gap-4'>
+        <div className='flex flex-col gap-4 border'>
           <video playsInline muted ref={myVideo} autoPlay className='' />
           <span>{name}</span>
         </div>
