@@ -1,17 +1,40 @@
+'use client';
 import Notifications from '@/components/Notifications';
 import Options from '@/components/Options';
 import VideoPlayer from '@/components/VideoPlayer';
-import React from 'react';
+import { SocketProvider } from '@/context/SocketContext';
+import React, { useEffect } from 'react';
+import { io, Socket } from 'socket.io-client';
 
-const page = () => {
-  return (
-    <div>
-      <VideoPlayer />
-      <Options>
-        <Notifications />
-      </Options>
-    </div>
-  );
+const socket = io('http://localhost:4000');
+
+const VideoCallPage = () => {
+  useEffect(() => {
+    const getSocketId = (id: string) => {
+      console.log(id);
+    };
+
+    socket.on('me', getSocketId);
+
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
+
+  return <div>video call page</div>;
 };
 
-export default page;
+export default VideoCallPage;
+
+/**
+ *     <SocketProvider>
+       <div>
+        <VideoPlayer />
+        <Options>
+          <Notifications />
+        </Options>
+      </div> 
+      <div></div>
+    </SocketProvider>
+ * 
+ */
