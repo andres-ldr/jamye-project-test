@@ -1,3 +1,4 @@
+'use client';
 import React, { createContext, useState, useRef, useEffect } from 'react';
 import { io } from 'socket.io-client';
 import Peer from 'simple-peer';
@@ -44,13 +45,13 @@ const initialState: SocketContextProps = {
   leaveCall: () => {},
 };
 
-export const SocketContext = createContext<SocketContextProps>(initialState);
+const SocketContext = createContext<SocketContextProps>(initialState);
 
 interface SocketProviderProps {
   children: React.ReactNode;
 }
 
-export const SocketProvider = ({ children }: SocketProviderProps) => {
+const SocketProvider = ({ children }: SocketProviderProps) => {
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [me, setMe] = useState<string | null>(null);
   const myVideo = useRef<HTMLVideoElement | null>(null);
@@ -76,7 +77,10 @@ export const SocketProvider = ({ children }: SocketProviderProps) => {
         }
       });
 
-    socket.on('me', (id: string) => setMe(id));
+    socket.on('me', (id: string) => {
+      setMe(id);
+      console.log('hello', id);
+    });
 
     socket.on('callUser', ({ from, name: callerName, signal }) => {
       setCall({ isReceivingCall: true, from, name: callerName, signal });
@@ -157,3 +161,5 @@ export const SocketProvider = ({ children }: SocketProviderProps) => {
     <SocketContext.Provider value={value}>{children}</SocketContext.Provider>
   );
 };
+
+export { SocketProvider, SocketContext };
