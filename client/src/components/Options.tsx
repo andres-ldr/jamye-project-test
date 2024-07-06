@@ -20,7 +20,13 @@ const Options = ({ children }: OptionsProps) => {
     leaveCall,
     callUser,
   } = useContext(SocketContext);
-  const [idToCall, setIdToCall] = useState(me || '');
+  const [idToCall, setIdToCall] = useState('');
+
+  useEffect(() => {
+    if (me) {
+      setIdToCall(me);
+    }
+  }, [me]);
 
   return (
     <div className='flex flex-col gap-10'>
@@ -35,7 +41,7 @@ const Options = ({ children }: OptionsProps) => {
         <label>Call To ID</label>
         <input
           type='text'
-          value={idToCall}
+          value={idToCall!}
           onChange={(e) => setIdToCall(e.target.value)}
           className='py-1 px-2 border rounded-md'
         />
