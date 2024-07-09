@@ -19,9 +19,16 @@ const io = new Server(server, {
 app.use(cors());
 
 io.on('connection', (socket) => {
-  console.log(`user ${socket.id}`);
+  socket.on('joinRoom', (id) => {
+    socket.join(id);
+    io.to(id).emit('me', socket.id);
+  });
 
-  socket.emit('me', socket.id);
+  socket.on('leaveRoom', (id) => {
+    console.log('leaveRoom', id);
+
+    socket.leave(id);
+  });
 
   socket.on('disconnect', () => {
     socket.broadcast.emit('callEnded');
