@@ -2,6 +2,7 @@
 import React, { createContext, useState, useRef, useEffect } from 'react';
 import { io, Socket } from 'socket.io-client';
 import Peer from 'simple-peer';
+import { useParams } from 'next/navigation';
 
 interface SocketContextProps {
   stream: MediaStream | null;
@@ -52,6 +53,7 @@ interface SocketProviderProps {
 }
 
 const SocketProvider = ({ children }: SocketProviderProps) => {
+  const params = useParams();
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [me, setMe] = useState<string | null>(null);
   const myVideo = useRef<HTMLVideoElement | null>(null);
@@ -81,16 +83,21 @@ const SocketProvider = ({ children }: SocketProviderProps) => {
         }
       });
 
-    socket.on('me', (id: string) => setMe(id));
+    socket.emit('joinRoom', params.id);
+
+    socket.on('me', (id: string) => {
+      setMe(id);
+    });
 
     socket.on('callUser', ({ from, name: callerName, signal }) => {
       setCall({ isReceivingCall: true, from, name: callerName, signal });
     });
 
     return () => {
+      socket.emit('leaveRoom', params.id);
       socket.disconnect();
     };
-  }, []);
+  }, [params.id]);
 
   const answerCall = () => {
     setCallAccepted(true);
