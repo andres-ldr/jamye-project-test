@@ -10,7 +10,7 @@ const Notifications = () => {
         <div style={{ display: 'flex', justifyContent: 'space-around' }}>
           <h1>{call.name} is calling:</h1>
           <button
-            className='py-1 px-2 bg-blue-500 rounded-md'
+            className='py-1 px-2 bg-green-500 rounded-md'
             onClick={answerCall}
           >
             Answer

@@ -49,7 +49,7 @@ const Options = ({ children }: OptionsProps) => {
           <button
             type='button'
             onClick={leaveCall}
-            className='py-1 px-2 bg-blue-500 rounded-md'
+            className='py-1 px-2 bg-red-500 rounded-md'
           >
             Hang Up
           </button>
