@@ -19,9 +19,27 @@ const io = new Server(server, {
 app.use(cors());
 
 io.on('connection', (socket) => {
+  socket.emit('me', socket.id);
   socket.on('joinRoom', (id) => {
     socket.join(id);
-    io.to(id).emit('me', socket.id);
+    // io.to(id).emit('me', socket.id);
+  });
+
+  socket.on('exchangeID', ({ room, id }) => {
+    io.to(room).emit('receiveID', id);
+  });
+
+  socket.on('getRoomConnections', (room) => {
+    const sockets = io.sockets.adapter.rooms.get(room);
+    if (sockets) {
+      const allSockets = Array.from(sockets);
+      socket.emit('roomConnections', allSockets);
+    } else {
+      socket.emit(
+        'roomConnections',
+        'Room does not exist or has no connections'
+      );
+    }
   });
 
   socket.on('leaveRoom', (id) => {

@@ -7,6 +7,7 @@ import { useParams } from 'next/navigation';
 interface SocketContextProps {
   stream: MediaStream | null;
   me: string | null;
+  userToCall: string | null;
   call: {
     isReceivingCall: boolean;
     from: string;
@@ -28,6 +29,7 @@ interface SocketContextProps {
 const initialState: SocketContextProps = {
   stream: null,
   me: null,
+  userToCall: null,
   call: {
     isReceivingCall: false,
     from: '',
@@ -56,6 +58,7 @@ const SocketProvider = ({ children }: SocketProviderProps) => {
   const params = useParams();
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [me, setMe] = useState<string | null>(null);
+  const [userToCall, setUserToCall] = useState<string | null>(null);
   const myVideo = useRef<HTMLVideoElement | null>(null);
   const userVideo = useRef<HTMLVideoElement | null>(null);
   const connectionRef = useRef<Peer.Instance | null>(null);
@@ -98,6 +101,20 @@ const SocketProvider = ({ children }: SocketProviderProps) => {
       socket.disconnect();
     };
   }, [params.id]);
+
+  useEffect(() => {
+    // if (socket && me) {
+    //   socket.emit('exchangeID', { room: params.id, id: me });
+    //   socket.on('receiveID', (id: string) => {
+    //     setUserToCall(id);
+    //   });
+    socket?.emit('getRoomConnections', params.id);
+    socket?.on('roomConnections', (connections: string[]) => {
+      console.log(connections);
+      const userToCall = connections.find((id) => id !== me);
+      if (userToCall) setUserToCall(userToCall);
+    });
+  }, [me, params.id, socket]);
 
   const answerCall = () => {
     setCallAccepted(true);
@@ -155,6 +172,7 @@ const SocketProvider = ({ children }: SocketProviderProps) => {
   const value = {
     stream,
     me,
+    userToCall,
     call,
     callAccepted,
     callEnded,
