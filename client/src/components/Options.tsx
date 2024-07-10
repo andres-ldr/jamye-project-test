@@ -16,6 +16,7 @@ const Options = ({ children }: OptionsProps) => {
     callAccepted,
     callEnded,
     me,
+    userToCall,
     setName,
     leaveCall,
     callUser,
@@ -28,6 +29,12 @@ const Options = ({ children }: OptionsProps) => {
     }
   }, [me]);
 
+  useEffect(() => {
+    if (userToCall) {
+      setIdToCall(userToCall);
+    }
+  }, [userToCall]);
+
   return (
     <div className='flex flex-col gap-10'>
       <form className='flex flex-col gap-4 py-2 px-4 border'>
@@ -38,10 +45,17 @@ const Options = ({ children }: OptionsProps) => {
           className='py-1 px-2 border rounded-md'
           onChange={(e) => setName(e.target.value)}
         />
+        <label>My Socket ID</label>
+        <input
+          type='text'
+          value={me!}
+          readOnly
+          className='py-1 px-2 border rounded-md'
+        />
         <label>Call To ID</label>
         <input
           type='text'
-          value={idToCall!}
+          value={idToCall}
           onChange={(e) => setIdToCall(e.target.value)}
           className='py-1 px-2 border rounded-md'
         />
