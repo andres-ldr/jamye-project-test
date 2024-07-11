@@ -72,6 +72,7 @@ const SocketProvider = ({ children }: SocketProviderProps) => {
   const [callEnded, setCallEnded] = useState(false);
   const [name, setName] = useState('');
   const [socket, setSocket] = useState<Socket>();
+  const [members, setMembers] = useState<string[]>([]);
 
   useEffect(() => {
     const socket = io('http://localhost:4000');
@@ -103,18 +104,15 @@ const SocketProvider = ({ children }: SocketProviderProps) => {
   }, [params.id]);
 
   useEffect(() => {
-    // if (socket && me) {
-    //   socket.emit('exchangeID', { room: params.id, id: me });
-    //   socket.on('receiveID', (id: string) => {
-    //     setUserToCall(id);
-    //   });
-    socket?.emit('getRoomConnections', params.id);
-    socket?.on('roomConnections', (connections: string[]) => {
-      console.log(connections);
-      const userToCall = connections.find((id) => id !== me);
-      if (userToCall) setUserToCall(userToCall);
-    });
-  }, [me, params.id, socket]);
+    if (socket && me) {
+      socket.emit('getRoomConnections', params.id);
+      socket.on('roomConnections', (connections: string[]) => {
+        setMembers(connections);
+        const userToCall = connections.find((id) => id !== me);
+        if (userToCall) setUserToCall(userToCall);
+      });
+    }
+  }, [me, params.id, socket, members]);
 
   const answerCall = () => {
     setCallAccepted(true);
