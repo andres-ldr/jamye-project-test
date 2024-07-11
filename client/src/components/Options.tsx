@@ -1,6 +1,6 @@
 'use client';
 import { SocketContext } from '@/context/SocketContext';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 
 interface OptionsProps {
   children: React.ReactNode;
@@ -23,9 +23,11 @@ const Options = ({ children }: OptionsProps) => {
   } = useContext(SocketContext);
   const [idToCall, setIdToCall] = useState('');
 
+  const input = useRef<HTMLInputElement>(null);
+
   useEffect(() => {
-    if (me) {
-      setIdToCall(me);
+    if (input.current) {
+      input.current.value = me || '';
     }
   }, [me]);
 
@@ -48,7 +50,7 @@ const Options = ({ children }: OptionsProps) => {
         <label>My Socket ID</label>
         <input
           type='text'
-          value={me!}
+          ref={input}
           readOnly
           className='py-1 px-2 border rounded-md'
         />
