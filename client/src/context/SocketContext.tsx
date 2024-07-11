@@ -59,9 +59,6 @@ const SocketProvider = ({ children }: SocketProviderProps) => {
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [me, setMe] = useState<string | null>(null);
   const [userToCall, setUserToCall] = useState<string | null>(null);
-  const myVideo = useRef<HTMLVideoElement | null>(null);
-  const userVideo = useRef<HTMLVideoElement | null>(null);
-  const connectionRef = useRef<Peer.Instance | null>(null);
   const [call, setCall] = useState({
     isReceivingCall: false,
     from: '',
@@ -73,6 +70,10 @@ const SocketProvider = ({ children }: SocketProviderProps) => {
   const [name, setName] = useState('');
   const [socket, setSocket] = useState<Socket>();
   const [members, setMembers] = useState<string[]>([]);
+
+  const myVideo = useRef<HTMLVideoElement | null>(null);
+  const userVideo = useRef<HTMLVideoElement | null>(null);
+  const connectionRef = useRef<Peer.Instance | null>(null);
 
   useEffect(() => {
     const socket = io('http://localhost:4000');
@@ -93,8 +94,16 @@ const SocketProvider = ({ children }: SocketProviderProps) => {
       setMe(id);
     });
 
+    // Listen for incoming calls and get data from the caller
     socket.on('callUser', ({ from, name: callerName, signal }) => {
+      // from: socket id of the caller
       setCall({ isReceivingCall: true, from, name: callerName, signal });
+    });
+
+    socket.on('callEnded', () => {
+      setCallEnded(true);
+      connectionRef.current?.destroy;
+      window.location.reload();
     });
 
     return () => {
@@ -119,7 +128,9 @@ const SocketProvider = ({ children }: SocketProviderProps) => {
     if (stream) {
       const peer = new Peer({ initiator: false, trickle: false, stream });
       peer.on('signal', (data) => {
-        socket!.emit('answerCall', { signal: data, to: call.from });
+        // emit callee's data to the caller
+        // to: caller's socket id
+        socket!.emit('answerCall', { signal: data, to: call.from, name });
       });
       peer.on('stream', (currentStream) => {
         if (userVideo.current) {
@@ -140,8 +151,9 @@ const SocketProvider = ({ children }: SocketProviderProps) => {
       const peer = new Peer({ initiator: true, trickle: false, stream });
 
       peer.on('signal', (data) => {
+        // emit caller's data to the callee
         socket!.emit('callUser', {
-          userToCall: id,
+          userToCall: id, // callee's socket id
           signalData: data,
           from: me,
           name,
@@ -152,8 +164,9 @@ const SocketProvider = ({ children }: SocketProviderProps) => {
           userVideo.current.srcObject = currentStream;
         }
       });
-      socket!.on('callAccepted', (signal) => {
+      socket!.on('callAccepted', ({ signal, name }) => {
         setCallAccepted(true);
+        setCall({ isReceivingCall: false, from: id, name, signal });
         peer.signal(signal);
       });
 
@@ -162,9 +175,10 @@ const SocketProvider = ({ children }: SocketProviderProps) => {
   };
 
   const leaveCall = () => {
-    setCallEnded(true);
-    connectionRef.current?.destroy();
-    window.location.reload();
+    socket!.emit('callEnded', { room: params.id});
+    // setCallEnded(true);
+    // connectionRef.current?.destroy();
+    // window.location.reload();
   };
 
   const value = {

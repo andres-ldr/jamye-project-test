@@ -48,16 +48,19 @@ io.on('connection', (socket) => {
     socket.leave(id);
   });
 
-  socket.on('disconnect', () => {
-    socket.broadcast.emit('callEnded');
+  socket.on('callEnded', ({ room }) => {
+    io.to(room).emit('callEnded');
   });
 
   socket.on('callUser', ({ userToCall, signalData, from, name }) => {
-    io.to(userToCall).emit('callUser', { signal: signalData, from, name });
+    io.in(userToCall).emit('callUser', { signal: signalData, from, name });
   });
 
-  socket.on('answerCall', ({ to, signal }) => {
-    io.to(to).emit('callAccepted', signal);
+  socket.on('answerCall', (data) => {
+    io.to(data.to).emit('callAccepted', {
+      signal: data.signal,
+      name: data.name,
+    });
   });
 });
 
