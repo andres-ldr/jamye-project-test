@@ -18,6 +18,10 @@ const io = new Server(server, {
 
 app.use(cors());
 
+app.get('/health', (req,res) => {
+  res.json({status: 200, message: "Server is healthy!"})
+})
+
 io.on('connection', (socket) => {
   socket.emit('me', socket.id);
   socket.on('joinRoom', (id) => {
