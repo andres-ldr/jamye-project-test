@@ -87,7 +87,7 @@ const SocketProvider = ({ children }: SocketProviderProps) => {
   }, []);
 
   useEffect(() => {
-    const socket = io('http://localhost:4000');
+    const socket = io('http://ec2-3-17-182-6.us-east-2.compute.amazonaws.com');
     setSocket(socket);
 
     socket.emit('joinRoom', params.id);
