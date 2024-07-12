@@ -87,7 +87,7 @@ const SocketProvider = ({ children }: SocketProviderProps) => {
   }, []);
 
   useEffect(() => {
-    const socket = io('http://ec2-3-17-182-6.us-east-2.compute.amazonaws.com');
+    const socket = io('https://limitless-reef-62795-677b5f4a9cdc.herokuapp.com');
     setSocket(socket);
 
     socket.emit('joinRoom', params.id);
