@@ -6,7 +6,7 @@ import { Server } from 'socket.io';
 
 dotenv.config();
 
-const PORT: number = Number(process.env.BACKEND_PORT) || 4000;
+const PORT: number = Number(process.env.PORT) || 4000;
 
 const app = express();
 const server = createServer(app);
