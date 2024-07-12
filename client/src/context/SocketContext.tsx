@@ -76,9 +76,6 @@ const SocketProvider = ({ children }: SocketProviderProps) => {
   const connectionRef = useRef<Peer.Instance | null>(null);
 
   useEffect(() => {
-    const socket = io('http://localhost:4000');
-    setSocket(socket);
-
     navigator.mediaDevices
       .getUserMedia({ video: true, audio: true })
       .then((stream: MediaStream) => {
@@ -87,6 +84,11 @@ const SocketProvider = ({ children }: SocketProviderProps) => {
           myVideo.current.srcObject = stream;
         }
       });
+  }, []);
+
+  useEffect(() => {
+    const socket = io('http://localhost:4000');
+    setSocket(socket);
 
     socket.emit('joinRoom', params.id);
 
@@ -175,10 +177,7 @@ const SocketProvider = ({ children }: SocketProviderProps) => {
   };
 
   const leaveCall = () => {
-    socket!.emit('callEnded', { room: params.id});
-    // setCallEnded(true);
-    // connectionRef.current?.destroy();
-    // window.location.reload();
+    socket!.emit('callEnded', { room: params.id });
   };
 
   const value = {
