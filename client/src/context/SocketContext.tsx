@@ -105,6 +105,7 @@ const SocketProvider = ({ children }: SocketProviderProps) => {
 
   useEffect(() => {
     const socket = io(`${process.env.NEXT_PUBLIC_BACKEND_URL}`);
+
     setSocket(socket);
 
     socket.emit('joinRoom', params.id);

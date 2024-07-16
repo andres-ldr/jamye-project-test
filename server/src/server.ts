@@ -6,7 +6,7 @@ import { Server } from 'socket.io';
 
 dotenv.config();
 
-const PORT: number = Number(process.env.BACKEND_PORT) || 4000;
+const PORT: number = Number(process.env.PORT) || 4000;
 
 const app = express();
 const server = createServer(app);
@@ -17,6 +17,10 @@ const io = new Server(server, {
 });
 
 app.use(cors());
+
+app.get('/health', (req,res) => {
+  res.json({status: 200, message: "Server is healthy!"})
+})
 
 io.on('connection', (socket) => {
   socket.emit('me', socket.id);
