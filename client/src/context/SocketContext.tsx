@@ -76,18 +76,35 @@ const SocketProvider = ({ children }: SocketProviderProps) => {
   const connectionRef = useRef<Peer.Instance | null>(null);
 
   useEffect(() => {
-    navigator.mediaDevices
-      .getUserMedia({ video: true, audio: true })
-      .then((stream: MediaStream) => {
-        setStream(stream);
+    const getMediaStream = async () => {
+      try {
+        const mediaStream = await navigator.mediaDevices.getUserMedia({
+          video: true,
+          audio: true,
+        });
+        setStream(mediaStream);
         if (myVideo.current) {
-          myVideo.current.srcObject = stream;
+          myVideo.current.srcObject = mediaStream;
+          myVideo.current.onloadedmetadata = (e) => {
+            myVideo.current!.play();
+          };
         }
-      });
-  }, []);
+      } catch (error) {
+        console.error('Error accessing media devices:', error);
+      }
+    };
+
+    getMediaStream();
+
+    return () => {
+      if (stream) {
+        stream.getTracks().forEach((track) => track.stop());
+      }
+    };
+  }, [stream]);
 
   useEffect(() => {
-    const socket = io('http://localhost:4000');
+    const socket = io(`${process.env.NEXT_PUBLIC_BACKEND_URL}`);
     setSocket(socket);
 
     socket.emit('joinRoom', params.id);
