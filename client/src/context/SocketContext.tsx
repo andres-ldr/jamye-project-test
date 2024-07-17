@@ -48,7 +48,7 @@ const SocketProvider = ({ children }: SocketProviderProps) => {
       //   stream.getTracks().forEach((track) => track.stop());
       // }
     };
-  }, []);
+  }, [myVideo]);
 
   const value = {
     stream,
