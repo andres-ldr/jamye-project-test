@@ -101,7 +101,7 @@ const SocketProvider = ({ children }: SocketProviderProps) => {
         stream.getTracks().forEach((track) => track.stop());
       }
     };
-  }, [stream]);
+  }, []);
 
   useEffect(() => {
     const socket = io(`${process.env.NEXT_PUBLIC_BACKEND_URL}`);
