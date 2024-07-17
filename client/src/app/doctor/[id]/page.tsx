@@ -9,9 +9,6 @@ const VideoCallPage = () => {
     <SocketProvider>
       <div className='flex flex-col gap-4'>
         <VideoPlayer />
-        <Options>
-          <Notifications />
-        </Options>
       </div>
     </SocketProvider>
   );
