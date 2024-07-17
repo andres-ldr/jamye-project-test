@@ -6,6 +6,7 @@ import { useParams } from 'next/navigation';
 
 interface SocketContextProps {
   stream: MediaStream | null;
+  setStream: React.Dispatch<React.SetStateAction<MediaStream | null>>;
   me: string | null;
   userToCall: string | null;
   call: {
@@ -28,6 +29,7 @@ interface SocketContextProps {
 
 const initialState: SocketContextProps = {
   stream: null,
+  setStream: () => {},
   me: null,
   userToCall: null,
   call: {
@@ -76,38 +78,47 @@ const SocketProvider = ({ children }: SocketProviderProps) => {
   const connectionRef = useRef<Peer.Instance | null>(null);
 
   useEffect(() => {
-    const getMediaStream = async () => {
-      try {
-        const mediaStream = await navigator.mediaDevices.getUserMedia({
-          video: true,
-          audio: true,
-        });
-        setStream(mediaStream);
-        if (myVideo.current) {
-          myVideo.current.srcObject = mediaStream;
-          myVideo.current.onloadedmetadata = (e) => {
-            myVideo.current!.play();
-          };
-        }
-      } catch (error) {
-        console.error('Error accessing media devices:', error);
-      }
-    };
+    // const getMediaStream = async () => {
+    //   try {
+    //     const mediaStream = await navigator.mediaDevices.getUserMedia({
+    //       video: true,
+    //       audio: true,
+    //     });
+    //     setStream(mediaStream);
+    //     if (myVideo.current) {
+    //       myVideo.current.srcObject = mediaStream;
+    //       myVideo.current.onloadedmetadata = (e) => {
+    //         myVideo.current!.play();
+    //       };
+    //     }
+    //   } catch (error) {
+    //     console.error('Error accessing media devices:', error);
+    //   }
+    // };
 
-    getMediaStream();
+    // const mediaStream = navigator.mediaDevices
+    //   .getUserMedia({
+    //     video: true,
+    //     audio: true,
+    //   })
+    //   .then((mediaStream) => {
+    //     setStream(mediaStream);
+    //     if (myVideo.current) {
+    //       myVideo.current.srcObject = mediaStream;
+    //       myVideo.current.onloadedmetadata = (e) => {
+    //         myVideo.current!.play();
+    //       };
+    //     }
+    //   })
+    //   .catch((error) => {
+    //     console.error('Error accessing media devices:', error);
+    //   });
 
-    return () => {
-      if (stream) {
-        stream.getTracks().forEach((track) => track.stop());
-      }
-    };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
     const socket = io(`${process.env.NEXT_PUBLIC_BACKEND_URL}`);
 
     setSocket(socket);
+
+    // getMediaStream();
 
     socket.emit('joinRoom', params.id);
 
@@ -130,6 +141,9 @@ const SocketProvider = ({ children }: SocketProviderProps) => {
     return () => {
       socket.emit('leaveRoom', params.id);
       socket.disconnect();
+      // if (stream) {
+      //   stream.getTracks().forEach((track) => track.stop());
+      // }
     };
   }, [params.id]);
 
@@ -201,6 +215,7 @@ const SocketProvider = ({ children }: SocketProviderProps) => {
 
   const value = {
     stream,
+    setStream,
     me,
     userToCall,
     call,
