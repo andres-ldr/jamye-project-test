@@ -12,7 +12,30 @@ const VideoPlayer = () => {
     callAccepted,
     callEnded,
     me,
+    setStream,
   } = useContext(SocketContext);
+
+  useEffect(() => {
+    const mediaStream = navigator.mediaDevices
+      .getUserMedia({
+        video: true,
+        audio: true,
+      })
+      .then((mediaStream) => {
+        setStream(mediaStream);
+        if (myVideo.current) {
+          myVideo.current.srcObject = mediaStream;
+          myVideo.current.onloadedmetadata = (e) => {
+            myVideo.current!.play();
+          };
+        }
+      })
+      .catch((error) => {
+        console.error('Error accessing media devices:', error);
+      });
+
+    return () => {};
+  }, [myVideo, setStream]);
 
   return (
     <div className='grid grid-cols-2 gap-4'>
