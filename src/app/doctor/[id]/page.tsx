@@ -9,7 +9,8 @@ const VideoCallPage = () => {
   return (
     <SocketProvider>
       <div className='flex flex-col gap-4'>
-       <WebCamCapture/>
+        {/* <WebCamCapture/> */}
+        <VideoPlayer />
       </div>
     </SocketProvider>
   );

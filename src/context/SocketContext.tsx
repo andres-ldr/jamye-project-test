@@ -4,13 +4,13 @@ import React, { createContext, useState, useRef, useEffect } from 'react';
 interface SocketContextProps {
   stream: MediaStream | null;
   setStream: React.Dispatch<React.SetStateAction<MediaStream | null>>;
-  myVideo: React.MutableRefObject<HTMLVideoElement | null>;
+  videoRef: React.MutableRefObject<HTMLVideoElement | null>;
 }
 
 const initialState: SocketContextProps = {
   stream: null,
   setStream: () => {},
-  myVideo: { current: null },
+  videoRef: { current: null },
 };
 
 const SocketContext = createContext<SocketContextProps>(initialState);
@@ -22,38 +22,29 @@ interface SocketProviderProps {
 const SocketProvider = ({ children }: SocketProviderProps) => {
   const [stream, setStream] = useState<MediaStream | null>(null);
 
-  const myVideo = useRef<HTMLVideoElement | null>(null);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
 
   useEffect(() => {
-    navigator.mediaDevices
-      .getUserMedia({
-        video: true,
-        audio: true,
-      })
-      .then((mediaStream) => {
-        setStream(mediaStream);
-        if (myVideo.current) {
-          myVideo.current.srcObject = mediaStream;
-          myVideo.current.onloadedmetadata = (e) => {
-            myVideo.current!.play();
-          };
+    const getVideo = async () => {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: true,
+        });
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
         }
-      })
-      .catch((error) => {
-        console.error('Error accessing media devices:', error);
-      });
-
-    return () => {
-      // if (stream) {
-      //   stream.getTracks().forEach((track) => track.stop());
-      // }
+      } catch (err) {
+        console.error('Error accessing the webcam', err);
+      }
     };
-  }, [myVideo]);
+
+    getVideo();
+  }, []);
 
   const value = {
     stream,
     setStream,
-    myVideo,
+    videoRef,
   };
 
   return (
