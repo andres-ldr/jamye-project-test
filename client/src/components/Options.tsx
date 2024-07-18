@@ -1,5 +1,5 @@
 'use client';
-import { SocketContext } from '@/context/SocketContext';
+// import { SocketContext } from '@/context/SocketContext';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 
 interface OptionsProps {
@@ -7,39 +7,39 @@ interface OptionsProps {
 }
 
 const Options = ({ children }: OptionsProps) => {
-  const {
-    name,
-    call,
-    myVideo,
-    userVideo,
-    stream,
-    callAccepted,
-    callEnded,
-    me,
-    userToCall,
-    setName,
-    leaveCall,
-    callUser,
-  } = useContext(SocketContext);
+  // const {
+  //   name,
+  //   call,
+  //   myVideo,
+  //   userVideo,
+  //   stream,
+  //   callAccepted,
+  //   callEnded,
+  //   me,
+  //   userToCall,
+  //   setName,
+  //   leaveCall,
+  //   callUser,
+  // } = useContext(SocketContext);
   const [idToCall, setIdToCall] = useState('');
 
   const input = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    if (input.current) {
-      input.current.value = me || '';
-    }
-  }, [me]);
+  // useEffect(() => {
+  //   if (input.current) {
+  //     input.current.value = me || '';
+  //   }
+  // }, [me]);
 
-  useEffect(() => {
-    if (userToCall) {
-      setIdToCall(userToCall);
-    }
-  }, [userToCall]);
+  // useEffect(() => {
+  //   if (userToCall) {
+  //     setIdToCall(userToCall);
+  //   }
+  // }, [userToCall]);
 
   return (
     <div className='flex flex-col gap-10'>
-      <form className='flex flex-col gap-4 py-2 px-4 border'>
+      {/* <form className='flex flex-col gap-4 py-2 px-4 border'>
         <label>Name</label>
         <input
           type='text'
@@ -78,7 +78,7 @@ const Options = ({ children }: OptionsProps) => {
             Call
           </button>
         )}
-      </form>
+      </form> */}
       {children}
     </div>
   );
