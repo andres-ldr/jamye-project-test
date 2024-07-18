@@ -7,11 +7,11 @@ const VideoPlayer = () => {
 
   return (
     <div className='grid grid-cols-2 gap-4'>
-      {stream && (
+      {/* {stream && ( */}
         <div className='flex flex-col gap-4 border'>
           <video playsInline muted ref={myVideo} autoPlay className='' />
         </div>
-      )}
+       {/* )} */}
     </div>
   );
 };
