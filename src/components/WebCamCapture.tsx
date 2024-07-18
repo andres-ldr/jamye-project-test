@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 
-const WebcamStreamCapture = () => {
+const WebCamCapture = () => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
 
   useEffect(() => {
@@ -27,4 +27,4 @@ const WebcamStreamCapture = () => {
   );
 };
 
-export default WebcamStreamCapture;
+export default WebCamCapture;
